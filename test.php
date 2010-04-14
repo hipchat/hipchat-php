@@ -18,7 +18,7 @@ echo "Hitting /rooms.json\n";
 try {
   $rooms = $hc->get_rooms();
   foreach ($rooms->rooms as $room) {
-    echo " - $room->id = $room->name\n";
+    echo " - $room->room_id = $room->name\n";
   }
 } catch (HipChat_Exception $e) {
   echo "Oops! Error: ".$e->getMessage();
@@ -29,7 +29,7 @@ echo "\nHitting /users.json\n";
 try {
   $users = $hc->get_users();
   foreach ($users->users as $user) {
-    echo " - $user->id = $user->name\n";
+    echo " - $user->user_id = $user->name\n";
   }
 } catch (HipChat_Exception $e) {
   echo "Oops! Error: ".$e->getMessage();

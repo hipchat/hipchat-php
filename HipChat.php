@@ -22,7 +22,6 @@ class HipChat {
    */
   const STATUS_BAD_RESPONSE = -1; // Not an HTTP response code
   const STATUS_OK = 200;
-  const STATUS_CREATED = 201;
   const STATUS_BAD_REQUEST = 400;
   const STATUS_UNAUTHORIZED = 401;
   const STATUS_FORBIDDEN = 403;
@@ -65,7 +64,8 @@ class HipChat {
    * @see http://api.hipchat.com/docs/api/method/rooms/show
    */
   public function get_room($room_id, $format = self::FORMAT_JSON) {
-    return $this->make_request("rooms/show/$room_id", $format);
+    $args = array('room_id' => $room_id);
+    return $this->make_request("rooms/show", $args, $format);
   }
 
   /**
@@ -74,7 +74,7 @@ class HipChat {
    * @see http://api.hipchat.com/docs/api/method/rooms
    */
   public function get_rooms($format = self::FORMAT_JSON) {
-    return $this->make_request('rooms', $format);
+    return $this->make_request('rooms/list', array(), $format);
   }
 
   /**
@@ -83,7 +83,8 @@ class HipChat {
    * @see http://api.hipchat.com/docs/api/method/users/show
    */
   public function get_user($user_id, $format = self::FORMAT_JSON) {
-    return $this->make_request("users/show/$user_id", $format);
+    $args = array('user_id' => $user_id);
+    return $this->make_request("users/show", $args, $format);
   }
 
   /**
@@ -92,7 +93,7 @@ class HipChat {
    * @see http://api.hipchat.com/docs/api/method/users
    */
   public function get_users($format = self::FORMAT_JSON) {
-    return $this->make_request('users', $format);
+    return $this->make_request('users/list', array(), $format);
   }
 
   /**
@@ -103,11 +104,11 @@ class HipChat {
   public function message_room($room_id, $from, $message,
                                $format = self::FORMAT_JSON) {
     $args = array(
+      'room_id' => $room_id,
       'from' => $from,
       'message' => utf8_encode($message)
     );
-    return $this->make_request("rooms/message/$room_id", $format, $args,
-                               self::STATUS_CREATED);
+    return $this->make_request("rooms/message", $args, $format);
   }
 
 
@@ -123,9 +124,10 @@ class HipChat {
    * @param $args               Data to send via POST.
    * @param $expected_response  Expected HTTP response code (usually 200)
    */
-  private function make_request($method, $format, $args = array(),
+  private function make_request($method, $args = array(),
+                                $format = self::FORMAT_JSON,
                                 $expected_response = self::STATUS_OK) {
-    $url = "$this->api_target/$this->api_version/$method.$format";
+    $url = "$this->api_target/$this->api_version/$method";
     $headers = array("Authorization: HipChat $this->api_token");
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
