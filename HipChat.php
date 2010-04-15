@@ -85,7 +85,7 @@ class HipChat {
       'from' => $from,
       'message' => utf8_encode($message)
     );
-    $response = $this->make_request("rooms/message", $args);
+    $response = $this->make_request("rooms/message", $args, 'POST');
     return ($response->status == 'sent');
   }
 
