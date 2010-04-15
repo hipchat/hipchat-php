@@ -10,12 +10,6 @@ class HipChat {
   const DEFAULT_TARGET = 'http://api.hipchat.com';
 
   /**
-   * Response formats
-   */
-  const FORMAT_JSON = 'json';
-  const FORMAT_XML = 'xml';
-
-  /**
    * HTTP response codes from API
    *
    * @see http://api.hipchat.com/docs/api/response_codes
@@ -63,18 +57,21 @@ class HipChat {
    *
    * @see http://api.hipchat.com/docs/api/method/rooms/show
    */
-  public function get_room($room_id, $format = self::FORMAT_JSON) {
-    $args = array('room_id' => $room_id);
-    return $this->make_request("rooms/show", $args, $format);
+  public function get_room($room_id) {
+    $response = $this->make_request("rooms/show", array(
+      'room_id' => $room_id
+    ));
+    return $response->room;
   }
 
   /**
    * Get list of rooms
    *
-   * @see http://api.hipchat.com/docs/api/method/rooms
+   * @see http://api.hipchat.com/docs/api/method/rooms/list
    */
-  public function get_rooms($format = self::FORMAT_JSON) {
-    return $this->make_request('rooms/list', array(), $format);
+  public function get_rooms() {
+    $response = $this->make_request('rooms/list');
+    return $response->rooms;
   }
 
   /**
@@ -82,18 +79,21 @@ class HipChat {
    *
    * @see http://api.hipchat.com/docs/api/method/users/show
    */
-  public function get_user($user_id, $format = self::FORMAT_JSON) {
-    $args = array('user_id' => $user_id);
-    return $this->make_request("users/show", $args, $format);
+  public function get_user($user_id) {
+    $response = $this->make_request("users/show", array(
+      'user_id' => $user_id
+    ));
+    return $response->user;
   }
 
   /**
    * Get list of users
    *
-   * @see http://api.hipchat.com/docs/api/method/users
+   * @see http://api.hipchat.com/docs/api/method/users/list
    */
-  public function get_users($format = self::FORMAT_JSON) {
-    return $this->make_request('users/list', array(), $format);
+  public function get_users() {
+    $response = $this->make_request('users/list');
+    return $response->users;
   }
 
   /**
@@ -101,14 +101,14 @@ class HipChat {
    *
    * @see http://api.hipchat.com/docs/api/method/rooms/message
    */
-  public function message_room($room_id, $from, $message,
-                               $format = self::FORMAT_JSON) {
+  public function message_room($room_id, $from, $message) {
     $args = array(
       'room_id' => $room_id,
       'from' => $from,
       'message' => utf8_encode($message)
     );
-    return $this->make_request("rooms/message", $args, $format);
+    $response = $this->make_request("rooms/message", $args);
+    return ($response->status == 'sent');
   }
 
 
@@ -116,27 +116,15 @@ class HipChat {
   // Private functions
   /////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Make an API request using curl
-   *
-   * @param $method             Which API method to hit. e.g.: 'rooms/show'
-   * @param $format             Desired response format.
-   * @param $args               Data to send via POST.
-   * @param $expected_response  Expected HTTP response code (usually 200)
-   */
-  private function make_request($method, $args = array(),
-                                $format = self::FORMAT_JSON,
-                                $expected_response = self::STATUS_OK) {
-    $url = "$this->api_target/$this->api_version/$method";
-    $headers = array("Authorization: HipChat $this->api_token");
+  private function curl_request($url, $headers = array(), $post_data = null) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-    if (!empty($args)) {
+    if (is_array($post_data)) {
       curl_setopt($ch, CURLOPT_POST, 1);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $args);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     }
     $response = curl_exec($ch);
 
@@ -147,30 +135,47 @@ class HipChat {
       throw new HipChat_Exception(self::STATUS_BAD_RESPONSE,
         "CURL error: $errno - $error", $url);
     }
-
+    
     // make sure we got a 200
     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if ($code != $expected_response) {
+    if ($code != self::STATUS_OK) {
       throw new HipChat_Exception(self::STATUS_BAD_RESPONSE,
         "HTTP status code: $code, response=$response", $url);
     }
 
     curl_close($ch);
 
-    // make sure response is valid
-    if ($format == self::FORMAT_JSON) {
-      $response = json_decode($response);
-      if (!$response) {
-        throw new HipChat_Exception(self::STATUS_BAD_RESPONSE,
-          "Invalid JSON received: $response", $url);
-      }
+    return $response;
+  }
+
+  /**
+   * Make an API request using curl
+   *
+   * @param $api_method         Which API method to hit, like 'rooms/show'.
+   * @param $args               Data to send.
+   * @param $http_method        HTTP method (GET or POST).
+   */
+  private function make_request($api_method, $args = array(),
+                                $http_method = 'GET') {
+    $args['format'] = 'json';
+    $headers = array("Authorization: HipChat $this->api_token");
+    $url = "$this->api_target/$this->api_version/$api_method";
+    $post_data = null;
+
+    // add args to url for GET
+    if ($http_method == 'GET') {
+      $url .= '?'.http_build_query($args);
     } else {
-      try {
-        $response = @new SimpleXMLElement($response);
-      } catch (Exception $e) {
-        throw new HipChat_Exception(self::STATUS_BAD_RESPONSE,
-          "Invalid XML received: $response", $url);
-      }
+      $post_data = $args;
+    }
+
+    $response = $this->curl_request($url, $headers, $post_data);
+
+    // make sure response is valid json
+    $response = json_decode($response);
+    if (!$response) {
+      throw new HipChat_Exception(self::STATUS_BAD_RESPONSE,
+        "Invalid JSON received: $response", $url);
     }
 
     return $response;
