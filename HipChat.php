@@ -49,7 +49,7 @@ class HipChat {
 
 
   /////////////////////////////////////////////////////////////////////////////
-  // Public functions
+  // Room functions
   /////////////////////////////////////////////////////////////////////////////
 
   /**
@@ -75,6 +75,26 @@ class HipChat {
   }
 
   /**
+   * Send a message to a room
+   *
+   * @see http://api.hipchat.com/docs/api/method/rooms/message
+   */
+  public function message_room($room_id, $from, $message) {
+    $args = array(
+      'room_id' => $room_id,
+      'from' => $from,
+      'message' => utf8_encode($message)
+    );
+    $response = $this->make_request("rooms/message", $args);
+    return ($response->status == 'sent');
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////
+  // User functions
+  /////////////////////////////////////////////////////////////////////////////
+  
+  /**
    * Get information about a user
    *
    * @see http://api.hipchat.com/docs/api/method/users/show
@@ -96,27 +116,19 @@ class HipChat {
     return $response->users;
   }
 
+
+  /////////////////////////////////////////////////////////////////////////////
+  // Helper functions
+  /////////////////////////////////////////////////////////////////////////////
+
   /**
-   * Send a message to a room
+   * Performs a curl request
    *
-   * @see http://api.hipchat.com/docs/api/method/rooms/message
+   * @param $url        URL to hit.
+   * @param $headers    Array of HTTP headers.
+   * @param $post_data  Data to send via POST. Leave null for GET request.
    */
-  public function message_room($room_id, $from, $message) {
-    $args = array(
-      'room_id' => $room_id,
-      'from' => $from,
-      'message' => utf8_encode($message)
-    );
-    $response = $this->make_request("rooms/message", $args);
-    return ($response->status == 'sent');
-  }
-
-
-  /////////////////////////////////////////////////////////////////////////////
-  // Private functions
-  /////////////////////////////////////////////////////////////////////////////
-
-  private function curl_request($url, $headers = array(), $post_data = null) {
+  public function curl_request($url, $headers = array(), $post_data = null) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -135,11 +147,11 @@ class HipChat {
       throw new HipChat_Exception(self::STATUS_BAD_RESPONSE,
         "CURL error: $errno - $error", $url);
     }
-    
+
     // make sure we got a 200
     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($code != self::STATUS_OK) {
-      throw new HipChat_Exception(self::STATUS_BAD_RESPONSE,
+      throw new HipChat_Exception($code,
         "HTTP status code: $code, response=$response", $url);
     }
 
@@ -151,12 +163,12 @@ class HipChat {
   /**
    * Make an API request using curl
    *
-   * @param $api_method         Which API method to hit, like 'rooms/show'.
-   * @param $args               Data to send.
-   * @param $http_method        HTTP method (GET or POST).
+   * @param $api_method   Which API method to hit, like 'rooms/show'.
+   * @param $args         Data to send.
+   * @param $http_method  HTTP method (GET or POST).
    */
-  private function make_request($api_method, $args = array(),
-                                $http_method = 'GET') {
+  public function make_request($api_method, $args = array(),
+                               $http_method = 'GET') {
     $args['format'] = 'json';
     $headers = array("Authorization: HipChat $this->api_token");
     $url = "$this->api_target/$this->api_version/$api_method";
