@@ -30,20 +30,20 @@ class HipChat {
   const VERSION_1 = 'v1';
 
   private $api_target;
-  private $api_token;
+  private $auth_token;
 
   /**
    * Creates a new API interaction object.
    *
-   * @param $api_token    Your API token.
+   * @param $auth_token   Your API token.
    * @param $api_target   API protocol and host. Change if you're using an API
    *                      proxy such as apigee.com.
    * @param $api-version  Version of API to use.
    */
-  function __construct($api_token, $api_target = self::DEFAULT_TARGET,
+  function __construct($auth_token, $api_target = self::DEFAULT_TARGET,
                        $api_version = self::VERSION_1) {
     $this->api_target = $api_target;
-    $this->api_token = $api_token;
+    $this->auth_token = $auth_token;
     $this->api_version = $api_version;
   }
 
@@ -125,13 +125,11 @@ class HipChat {
    * Performs a curl request
    *
    * @param $url        URL to hit.
-   * @param $headers    Array of HTTP headers.
    * @param $post_data  Data to send via POST. Leave null for GET request.
    */
-  public function curl_request($url, $headers = array(), $post_data = null) {
+  public function curl_request($url, $post_data = null) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     if (is_array($post_data)) {
@@ -170,7 +168,7 @@ class HipChat {
   public function make_request($api_method, $args = array(),
                                $http_method = 'GET') {
     $args['format'] = 'json';
-    $headers = array("Authorization: HipChat $this->api_token");
+    $args['auth_token'] = $this->auth_token;
     $url = "$this->api_target/$this->api_version/$api_method";
     $post_data = null;
 
@@ -181,7 +179,7 @@ class HipChat {
       $post_data = $args;
     }
 
-    $response = $this->curl_request($url, $headers, $post_data);
+    $response = $this->curl_request($url, $post_data);
 
     // make sure response is valid json
     $response = json_decode($response);
