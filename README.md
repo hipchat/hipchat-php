@@ -20,9 +20,13 @@ Usage
     $token = '<your api token>';
     $hc = new HipChat($token);
 
+    // list rooms
     foreach ($hc->get_rooms() as $room) {
       echo " - $room->id = $room->name\n";
     }
+
+    // send a message to the 'Development' room from 'API'
+    $hc->message_room('Development', 'API', 'This is just a test message!');
 
 
 [hc]: http://www.hipchat.com
