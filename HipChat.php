@@ -79,11 +79,12 @@ class HipChat {
    *
    * @see http://api.hipchat.com/docs/api/method/rooms/message
    */
-  public function message_room($room_id, $from, $message) {
+  public function message_room($room_id, $from, $message, $notify = false) {
     $args = array(
       'room_id' => $room_id,
       'from' => $from,
-      'message' => utf8_encode($message)
+      'message' => utf8_encode($message),
+      'notify' => (int)$notify
     );
     $response = $this->make_request("rooms/message", $args, 'POST');
     return ($response->status == 'sent');
