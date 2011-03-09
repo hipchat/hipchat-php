@@ -7,7 +7,7 @@
  */
 class HipChat {
 
-  const DEFAULT_TARGET = 'http://api.hipchat.com';
+  const DEFAULT_TARGET = 'https://api.hipchat.com';
 
   /**
    * HTTP response codes from API
