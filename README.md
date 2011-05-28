@@ -22,7 +22,7 @@ Usage
 
     // list rooms
     foreach ($hc->get_rooms() as $room) {
-      echo " - $room->id = $room->name\n";
+      echo " - $room->room_id = $room->name\n";
     }
 
     // send a message to the 'Development' room from 'API'
