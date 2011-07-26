@@ -24,6 +24,12 @@ class HipChat {
   const STATUS_INTERNAL_SERVER_ERROR = 500;
   const STATUS_SERVICE_UNAVAILABLE = 503;
 
+  const COLOR_YELLOW = 'yellow';
+  const COLOR_RED = 'red';
+  const COLOR_GREEN = 'green';
+  const COLOR_PURPLE = 'purple';
+  const COLOR_RANDOM = 'random';
+
   /**
    * API versions
    */
@@ -79,12 +85,19 @@ class HipChat {
    *
    * @see http://api.hipchat.com/docs/api/method/rooms/message
    */
-  public function message_room($room_id, $from, $message, $notify = false) {
+  public function message_room($room_id, $from, $message, $notify = false, $color = self::COLOR_YELLOW) {
+
+    if (!in_array($color, array(self::COLOR_YELLOW, self::COLOR_PURPLE, self::COLOR_GREEN, self::COLOR_RED, self::COLOR_RANDOM))) 
+    {
+      throw new InvalidArgumentException(sprintf('Unkown color "%s"', $color));
+    }
+
     $args = array(
       'room_id' => $room_id,
       'from' => $from,
       'message' => utf8_encode($message),
-      'notify' => (int)$notify
+      'notify' => (int)$notify,
+      'color' => $color
     );
     $response = $this->make_request("rooms/message", $args, 'POST');
     return ($response->status == 'sent');
