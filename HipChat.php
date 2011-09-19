@@ -103,6 +103,18 @@ class HipChat {
     return ($response->status == 'sent');
   }
 
+  /**
+   * Get chat history for a room
+   *
+   * @see https://www.hipchat.com/docs/api/method/rooms/history
+   */
+   public function get_rooms_history($room_id, $date = 'recent') {
+     $response = $this->make_request('rooms/history', array(
+      'room_id' => $room_id,
+      'date' => $date
+     ));
+     return $response->messages;
+   }
 
   /////////////////////////////////////////////////////////////////////////////
   // User functions
