@@ -19,7 +19,7 @@ composer.json file.  Composer will handle the autoloading.
 
 ```php
 $token = '<your api token>';
-$hc = new HipChat/HipChat($token);
+$hc = new HipChat\HipChat($token);
 
 // list rooms
 foreach ($hc->get_rooms() as $room) {
