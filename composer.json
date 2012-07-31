@@ -1,18 +1,10 @@
 {
-    "name": "dshimy/hipchat-php",
+    "name": "hipchat/hipchat-php",
     "type": "library",
     "description": "PHP Library for HipChat",
     "keywords": ["hipchat"],
-    "homepage": "http://github.com/dshimy/hipchat-php",
+    "homepage": "http://github.com/hipchat/hipchat-php",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Darian Shimy",
-            "email": "dshimy@gmail.com",
-            "homepage": "http://www.darainshimy.com",
-            "role": "Developer"
-        }
-    ],
     "require": {
         "php": ">=5.3.0"
     },

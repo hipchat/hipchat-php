@@ -10,7 +10,7 @@ composer.json file.  Composer will handle the autoloading.
 ```json
 {
     "require": {
-        "dshimy/hipchat-php": ">=1.0.0"
+        "hipchat/hipchat-php": ">=1.0.0"
     }
 }
 ```
