@@ -7,7 +7,7 @@
  * TODO: Test valid requests. What API token to use?
  */
 
-require_once dirname(__FILE__).'/../HipChat.php';
+require_once dirname(__FILE__).'/../src/HipChat/HipChat.php';
 require_once 'PHPUnit/Framework.php';
 
 class HipChatPHPTest extends PHPUnit_Framework_TestCase {
