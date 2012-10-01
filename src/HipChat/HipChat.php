@@ -229,6 +229,7 @@ class HipChat {
    * 
    * @param bool $bool
    * @return bool
+   * @link http://davidwalsh.name/php-ssl-curl-error
    */
   public function set_verify_ssl($bool = true)
   {
