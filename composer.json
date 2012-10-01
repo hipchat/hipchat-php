@@ -1,7 +1,7 @@
 {
     "name": "hipchat/hipchat-php",
     "type": "library",
-    "description": "PHP Library for HipChat",
+    "description": "PHP library for HipChat",
     "keywords": ["hipchat"],
     "homepage": "http://github.com/hipchat/hipchat-php",
     "license": "MIT",
@@ -12,5 +12,13 @@
         "psr-0": {
             "HipChat": "src"
         }
-    }
+    },
+    "authors": [
+      {
+        "name": "HipChat",
+        "email": "support@hipchat.com",
+        "homepage": "https://www.hipchat.com",
+        "role": "Company"
+      }
+    ]
 }
