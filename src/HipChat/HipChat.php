@@ -1,5 +1,7 @@
 <?php
 
+namespace HipChat;
+
 /**
  * Library for interacting with the HipChat REST API.
  *
@@ -37,6 +39,7 @@ class HipChat {
 
   private $api_target;
   private $auth_token;
+  private $verify_ssl = true;
 
   /**
    * Creates a new API interaction object.
@@ -158,6 +161,7 @@ class HipChat {
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->verify_ssl);
     if (is_array($post_data)) {
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
@@ -216,11 +220,27 @@ class HipChat {
 
     return $response;
   }
+    
+  /**
+   * Enable/disable verify_ssl.
+   * This is useful when curl spits back ssl verification errors, most likely due to 
+   * outdated SSL CA bundle file on server.  If you are able to, update that CA bundle.
+   * If not, call this method with false for $bool param before interacting with the API.
+   * 
+   * @param bool $bool
+   * @return bool
+   * @link http://davidwalsh.name/php-ssl-curl-error
+   */
+  public function set_verify_ssl($bool = true)
+  {
+    $this->verify_ssl = (bool) $bool;
+    return $this->verify_ssl;
+  }  
 
 }
 
 
-class HipChat_Exception extends Exception {
+class HipChat_Exception extends \Exception {
 	public function __construct($code, $info, $url) {
     $message = "HipChat API error: code=$code, info=$info, url=$url";
 		parent::__construct($message, (int)$code);
