@@ -92,7 +92,7 @@ class HipChat {
 
     if (!in_array($color, array(self::COLOR_YELLOW, self::COLOR_PURPLE, self::COLOR_GREEN, self::COLOR_RED, self::COLOR_RANDOM))) 
     {
-      throw new InvalidArgumentException(sprintf('Unkown color "%s"', $color));
+      throw new \InvalidArgumentException(sprintf('Unkown color "%s"', $color));
     }
 
     $args = array(
