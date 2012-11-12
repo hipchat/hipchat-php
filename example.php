@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require 'HipChat.php';
+require 'src/HipChat/HipChat.php';
 
 if (!isset($argv[1])) {
   echo "Usage: $argv[0] <token> [target]\n";
@@ -10,7 +10,7 @@ if (!isset($argv[1])) {
 
 $token = $argv[1];
 $target = isset($argv[2]) ? $argv[2] : 'https://api.hipchat.com';
-$hc = new HipChat($token, $target);
+$hc = new HipChat\HipChat($token, $target);
 
 echo "Testing HipChat API.\nTarget: $target\nToken: $token\n\n";
 
