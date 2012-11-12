@@ -9,7 +9,7 @@ if (!isset($argv[1])) {
 }
 
 $token = $argv[1];
-$target = isset($argv[2]) ? $argv[2] : 'http://api.hipchat.com';
+$target = isset($argv[2]) ? $argv[2] : 'https://api.hipchat.com';
 $hc = new HipChat($token, $target);
 
 echo "Testing HipChat API.\nTarget: $target\nToken: $token\n\n";
