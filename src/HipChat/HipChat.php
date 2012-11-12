@@ -119,6 +119,23 @@ class HipChat {
      return $response->messages;
    }
 
+  /**
+   * Set a room's topic
+   *
+   * @see http://api.hipchat.com/docs/api/method/rooms/topic
+   */
+  public function set_room_topic($room_id, $topic, $from = null) {
+    $args = array(
+      'room_id' => $room_id,
+      'topic' => utf8_encode($topic),
+    );
+    if ($from) {
+      $args['from'] = utf8_encode($from);
+    }
+    $response = $this->make_request("rooms/topic", $args, 'POST');
+    return ($response->status == 'ok');
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   // User functions
   /////////////////////////////////////////////////////////////////////////////
