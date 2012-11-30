@@ -98,7 +98,9 @@ class HipChat {
    *
    * @see http://api.hipchat.com/docs/api/method/rooms/message
    */
-  public function message_room($room_id, $from, $message, $notify = false, $color = self::COLOR_YELLOW, $message_format = self::FORMAT_HTML) {
+  public function message_room($room_id, $from, $message, $notify = false,
+                               $color = self::COLOR_YELLOW,
+                               $message_format = self::FORMAT_HTML) {
 
     $args = array(
       'room_id' => $room_id,
@@ -246,17 +248,17 @@ class HipChat {
     
   /**
    * Enable/disable verify_ssl.
-   * This is useful when curl spits back ssl verification errors, most likely due to 
-   * outdated SSL CA bundle file on server.  If you are able to, update that CA bundle.
-   * If not, call this method with false for $bool param before interacting with the API.
+   * This is useful when curl spits back ssl verification errors, most likely
+   * due to outdated SSL CA bundle file on server. If you are able to, update
+   * that CA bundle. If not, call this method with false for $bool param before
+   * interacting with the API.
    * 
    * @param bool $bool
    * @return bool
    * @link http://davidwalsh.name/php-ssl-curl-error
    */
-  public function set_verify_ssl($bool = true)
-  {
-    $this->verify_ssl = (bool) $bool;
+  public function set_verify_ssl($bool = true) {
+    $this->verify_ssl = (bool)$bool;
     return $this->verify_ssl;
   }  
 
