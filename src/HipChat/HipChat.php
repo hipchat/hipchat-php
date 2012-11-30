@@ -28,6 +28,7 @@ class HipChat {
 
   const COLOR_YELLOW = 'yellow';
   const COLOR_RED = 'red';
+  const COLOR_GRAY = 'gray';
   const COLOR_GREEN = 'green';
   const COLOR_PURPLE = 'purple';
   const COLOR_RANDOM = 'random';
