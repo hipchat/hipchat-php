@@ -33,12 +33,4 @@ class HipChatPHPTest extends PHPUnit_Framework_TestCase {
     $hc->make_request('bad/method');
   }
 
-  public function testBadColor()
-  {
-    $bad_color = 'fancy pink';
-    $hc = new HipChat\HipChat('hipchat-php-test-token', $this->target);
-    $this->setExpectedException('InvalidArgumentException');
-    $hc->message_room(1337, 'Hipchat', "Hi everybody.", false, $bad_color);
-  }
-
 }

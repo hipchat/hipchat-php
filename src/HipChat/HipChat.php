@@ -100,11 +100,6 @@ class HipChat {
    */
   public function message_room($room_id, $from, $message, $notify = false, $color = self::COLOR_YELLOW, $message_format = self::FORMAT_HTML) {
 
-    if (!in_array($color, array(self::COLOR_YELLOW, self::COLOR_PURPLE, self::COLOR_GREEN, self::COLOR_RED, self::COLOR_RANDOM))) 
-    {
-      throw new \InvalidArgumentException(sprintf('Unkown color "%s"', $color));
-    }
-
     $args = array(
       'room_id' => $room_id,
       'from' => $from,
