@@ -204,7 +204,7 @@ class HipChat {
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     }
-    if ($this->is_associative(this->$curl_options)) {
+    if ($this->is_associative($this->curl_options)) {
     	foreach ($curl_options as $option => $value) {
     		curl_setopt($ch, $option, $value);
     	}
