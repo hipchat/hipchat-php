@@ -195,6 +195,7 @@ class HipChat {
    * @param $post_data  Data to send via POST. Leave null for GET request.
    */
   public function curl_request($url, $post_data = null) {
+    $curl_options = $this->curl_options;
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -204,7 +205,7 @@ class HipChat {
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     }
-    if ($this->is_associative($this->curl_options)) {
+    if ($this->is_associative($curl_options)) {
     	foreach ($curl_options as $option => $value) {
     		curl_setopt($ch, $option, $value);
     	}
