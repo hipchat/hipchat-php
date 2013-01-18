@@ -176,12 +176,24 @@ class HipChat {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * Checks to see if array is associative
+   * Source: http://stackoverflow.com/a/173479/301744
+   * 
+   * @param $array	Array to test
+   */
+  public function is_associative($array) {
+    return array_keys($array) !== range(0, count($array) - 1);
+  }
+
+
+  /**
    * Performs a curl request
    *
    * @param $url        URL to hit.
    * @param $post_data  Data to send via POST. Leave null for GET request.
+   * @param $curl_option Additional CURL options to set
    */
-  public function curl_request($url, $post_data = null) {
+  public function curl_request($url, $post_data = null, $curl_option = null) {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -190,6 +202,11 @@ class HipChat {
     if (is_array($post_data)) {
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+    }
+    if ($this->is_associative($curl_option)) {
+    	foreach ($curl_option as $option => $value) {
+    		curl_setopt($ch, $option, $value);
+    	}
     }
     $response = curl_exec($ch);
 
