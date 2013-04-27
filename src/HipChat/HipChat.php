@@ -55,15 +55,17 @@ class HipChat {
    * Creates a new API interaction object.
    *
    * @param $auth_token   Your API token.
+   * @param $curl_options Additional curl options to set.
    * @param $api_target   API protocol and host. Change if you're using an API
    *                      proxy such as apigee.com.
    * @param $api-version  Version of API to use.
    */
-  function __construct($auth_token, $api_target = self::DEFAULT_TARGET,
+  function __construct($auth_token, $curl_options = null, $api_target = self::DEFAULT_TARGET,
                        $api_version = self::VERSION_1) {
     $this->api_target = $api_target;
     $this->auth_token = $auth_token;
     $this->api_version = $api_version;
+    $this->curl_options = $curl_options;
   }
 
 
@@ -223,12 +225,24 @@ class HipChat {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
+   * Checks to see if array is associative
+   * Source: http://stackoverflow.com/a/173479/301744
+   * 
+   * @param $array	Array to test
+   */
+  public function is_associative($array) {
+    return array_keys($array) !== range(0, count($array) - 1);
+  }
+
+
+  /**
    * Performs a curl request
    *
    * @param $url        URL to hit.
    * @param $post_data  Data to send via POST. Leave null for GET request.
    */
   public function curl_request($url, $post_data = null) {
+    $curl_options = $this->curl_options;
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -237,6 +251,11 @@ class HipChat {
     if (is_array($post_data)) {
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+    }
+    if ($this->is_associative($curl_options)) {
+    	foreach ($curl_options as $option => $value) {
+    		curl_setopt($ch, $option, $value);
+    	}
     }
     $response = curl_exec($ch);
 
