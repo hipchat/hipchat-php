@@ -132,22 +132,69 @@ class HipChat {
    *
    * @see http://api.hipchat.com/docs/api/method/rooms/topic
    */
-  public function set_room_topic($room_id, $topic, $from = null) {
-    $args = array(
-      'room_id' => $room_id,
-      'topic' => utf8_encode($topic),
-    );
-    if ($from) {
-      $args['from'] = utf8_encode($from);
+   public function set_room_topic($room_id, $topic, $from = null) {
+     $args = array(
+       'room_id' => $room_id,
+       'topic' => utf8_encode($topic),
+     );
+
+     if ($from) {
+       $args['from'] = utf8_encode($from);
+     }
+
+     $response = $this->make_request("rooms/topic", $args, 'POST');
+     return ($response->status == 'ok');
+   }
+
+  /**
+   * Create a room
+   *
+   * @see http://api.hipchat.com/docs/api/method/rooms/create
+   */
+   public function create_room($name, $owner_user_id = null, $privacy = null, $topic = null, $guest_access = null) {
+     $args = array(
+       'name' => $name
+     );
+
+     if ($owner_user_id) {
+       $args['owner_user_id'] = $owner_user_id;
+     }
+
+     if ($privacy) {
+       $args['privacy'] = $privacy;
+     }
+
+     if ($topic) {
+       $args['topic'] = utf8_encode($topic);
+     }
+
+     if ($guest_access) {
+       $args['guest_access'] = (int) $guest_access;
+     }
+
+     // Return the std object
+     return $this->make_request("rooms/create", $args, 'POST');
     }
-    $response = $this->make_request("rooms/topic", $args, 'POST');
-    return ($response->status == 'ok');
-  }
+
+    /**
+     * Delete a room
+     *
+     * @see http://api.hipchat.com/docs/api/method/rooms/delete
+     */
+   public function delete_room($room_id){
+     $args = array(
+       'room_id' => $room_id
+     );
+
+     $response = $this->make_request("rooms/delete", $args, 'POST');
+
+     return ($response->deleted == 'true');
+   }
 
   /////////////////////////////////////////////////////////////////////////////
   // User functions
   /////////////////////////////////////////////////////////////////////////////
-  
+
   /**
    * Get information about a user
    *
@@ -245,14 +292,14 @@ class HipChat {
 
     return $response;
   }
-    
+
   /**
    * Enable/disable verify_ssl.
    * This is useful when curl spits back ssl verification errors, most likely
    * due to outdated SSL CA bundle file on server. If you are able to, update
    * that CA bundle. If not, call this method with false for $bool param before
    * interacting with the API.
-   * 
+   *
    * @param bool $bool
    * @return bool
    * @link http://davidwalsh.name/php-ssl-curl-error
@@ -260,7 +307,7 @@ class HipChat {
   public function set_verify_ssl($bool = true) {
     $this->verify_ssl = (bool)$bool;
     return $this->verify_ssl;
-  }  
+  }
 
 }
 
