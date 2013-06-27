@@ -101,15 +101,6 @@ class HipChat {
   public function message_room($room_id, $from, $message, $notify = false,
                                $color = self::COLOR_YELLOW,
                                $message_format = self::FORMAT_HTML) {
-
-    if ((strlen($message) > 0) && ($message[0] === "@"))
-    {
-      // prepend message with space, since the first character is a @ and PHP would
-      // treat this as file upload
-      // @link http://www.php.net/manual/en/function.curl-setopt.php CURLOPT_POSTFIELDS
-      $message = ' ' . $message;
-    }
-
     $args = array(
       'room_id' => $room_id,
       'from' => $from,
@@ -237,6 +228,12 @@ class HipChat {
    * @param $post_data  Data to send via POST. Leave null for GET request.
    */
   public function curl_request($url, $post_data = null) {
+
+    if (is_array($post_data))
+    {
+      $post_data = array_map(array($this, "sanitizeCurlParameter"), $post_data);
+    }
+
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -266,6 +263,26 @@ class HipChat {
     curl_close($ch);
 
     return $response;
+  }
+
+  /**
+   * Sanitizes the given value as cURL parameter.
+   *
+   * The first value may not be a "@". PHP would treat this as a file upload
+   *
+   * @link http://www.php.net/manual/en/function.curl-setopt.php CURLOPT_POSTFIELDS
+   *
+   * @param string $value
+   * @return string
+   */
+  private function sanitizeCurlParameter ($value)
+  {
+    if ((strlen($value) > 0) && ($value[0] === "@"))
+    {
+      $value = ' ' . $value;
+    }
+
+    return $value;
   }
 
   /**

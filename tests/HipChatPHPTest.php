@@ -48,7 +48,7 @@ class HipChatPHPTest extends PHPUnit_Framework_TestCase {
   public function testMentionAtFirstPosition ()
   {
     $hc = new HipChat\HipChat('hipchat-php-test-token', $this->target);
-    $hc->message_room(123, 'sender', '@test test');
+    $hc->message_room(123, '@sender', '@test test');
   }
 
 }
