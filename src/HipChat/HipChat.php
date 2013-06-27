@@ -102,6 +102,14 @@ class HipChat {
                                $color = self::COLOR_YELLOW,
                                $message_format = self::FORMAT_HTML) {
 
+    if ((strlen($message) > 0) && ($message[0] === "@"))
+    {
+      // prepend message with space, since the first character is a @ and PHP would
+      // treat this as file upload
+      // @link http://www.php.net/manual/en/function.curl-setopt.php CURLOPT_POSTFIELDS
+      $message = ' ' . $message;
+    }
+
     $args = array(
       'room_id' => $room_id,
       'from' => $from,

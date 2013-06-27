@@ -33,4 +33,22 @@ class HipChatPHPTest extends PHPUnit_Framework_TestCase {
     $hc->make_request('bad/method');
   }
 
+
+
+  /**
+   * Tests for a mention at the first position in the message.
+   *
+   * In PHP, curl uses the syntax "@test.php" to send *the file*
+   * test.php via curl.
+   *
+   * This test should actually just work (i.e. not throwing an exception)
+   *
+   * @link http://www.php.net/manual/en/function.curl-setopt.php see reference for CURLOPT_POSTFIELDS
+   */
+  public function testMentionAtFirstPosition ()
+  {
+    $hc = new HipChat\HipChat('hipchat-php-test-token', $this->target);
+    $hc->message_room(123, 'sender', '@test test');
+  }
+
 }
