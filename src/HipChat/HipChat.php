@@ -226,12 +226,14 @@ class HipChat {
    *
    * @param $url        URL to hit.
    * @param $post_data  Data to send via POST. Leave null for GET request.
+   *
+   * @throws HipChat_Exception
+   * @return string
    */
   public function curl_request($url, $post_data = null) {
 
-    if (is_array($post_data))
-    {
-      $post_data = array_map(array($this, "sanitizeCurlParameter"), $post_data);
+    if (is_array($post_data)) {
+      $post_data = array_map(array($this, "sanitize_curl_parameter"), $post_data);
     }
 
     $ch = curl_init($url);
@@ -275,22 +277,26 @@ class HipChat {
    * @param string $value
    * @return string
    */
-  private function sanitizeCurlParameter ($value)
-  {
-    if ((strlen($value) > 0) && ($value[0] === "@"))
-    {
-      $value = ' ' . $value;
+  private function sanitize_curl_parameter ($value) {
+
+    if ((strlen($value) > 0) && ($value[0] === "@")) {
+      return substr_replace($value, '&#64;', 0, 1);
     }
 
     return $value;
   }
 
+
+
   /**
    * Make an API request using curl
    *
-   * @param $api_method   Which API method to hit, like 'rooms/show'.
-   * @param $args         Data to send.
-   * @param $http_method  HTTP method (GET or POST).
+   * @param string $api_method  Which API method to hit, like 'rooms/show'.
+   * @param array  $args        Data to send.
+   * @param string $http_method HTTP method (GET or POST).
+   *
+   * @throws HipChat_Exception
+   * @return mixed
    */
   public function make_request($api_method, $args = array(),
                                $http_method = 'GET') {
