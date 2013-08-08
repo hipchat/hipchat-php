@@ -286,8 +286,6 @@ class HipChat {
     return $value;
   }
 
-
-
   /**
    * Make an API request using curl
    *
