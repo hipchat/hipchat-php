@@ -84,7 +84,7 @@ class HipChat {
   }
 
   /**
-   * Determine is the given room name already exists.
+   * Determine if the given room name already exists.
    *
    * @param string $name
    * @return boolean
