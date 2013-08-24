@@ -84,6 +84,24 @@ class HipChat {
   }
 
   /**
+   * Determine is the given room name already exists.
+   *
+   * @param string $name
+   * @return boolean
+   */
+  public function room_exists($name) {
+    try {
+      $response = $this->make_request("rooms/show", array(
+        'room_id' => $name
+      ));
+    } 
+    catch (HipChat_Exception $e) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Get list of rooms
    *
    * @see http://api.hipchat.com/docs/api/method/rooms/list
