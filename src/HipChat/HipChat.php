@@ -84,19 +84,20 @@ class HipChat {
   }
 
   /**
-   * Determine if the given room name already exists.
+   * Determine if the given room name or room id already exists.
    *
-   * @param string $name
+   * @param mixed $room_id
    * @return boolean
    */
-  public function room_exists($name) {
+  public function room_exists($room_id) {
     try {
-      $response = $this->make_request("rooms/show", array(
-        'room_id' => $name
-      ));
+      $this->get_room($room_id);
     } 
     catch (HipChat_Exception $e) {
-      return false;
+      if ($e->code === self::STATUS_NOT_FOUND) {
+        return false;
+      }
+      throw $e;
     }
     return true;
   }
@@ -360,7 +361,8 @@ class HipChat {
 
 
 class HipChat_Exception extends \Exception {
-	public function __construct($code, $info, $url) {
+  public $code;
+  public function __construct($code, $info, $url) {
     $message = "HipChat API error: code=$code, info=$info, url=$url";
 		parent::__construct($message, (int)$code);
 	}
