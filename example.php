@@ -24,7 +24,7 @@ try {
     $room_data = $hc->get_room($room->room_id);
     echo " - Participants: ".count($room_data->participants)."\n";
   }
-} catch (HipChat_Exception $e) {
+} catch (HipChat\HipChat_Exception $e) {
   echo "Oops! Error: ".$e->getMessage();
 }
 
@@ -39,6 +39,6 @@ try {
     $user_data = $hc->get_user($user->user_id);
     echo " - Status: ".$user_data->status."\n";
   }
-} catch (HipChat_Exception $e) {
+} catch (HipChat\HipChat_Exception $e) {
   echo "Oops! Error: ".$e->getMessage();
 }
