@@ -54,10 +54,10 @@ class HipChat {
   /**
    * Creates a new API interaction object.
    *
-   * @param $auth_token   Your API token.
-   * @param $api_target   API protocol and host. Change if you're using an API
-   *                      proxy such as apigee.com.
-   * @param $api-version  Version of API to use.
+   * @param $auth_token string Your API token.
+   * @param $api_target string API protocol and host. Change if you're using an API
+   *                           proxy such as apigee.com.
+   * @param $api_version string Version of API to use.
    */
   function __construct($auth_token, $api_target = self::DEFAULT_TARGET,
                        $api_version = self::VERSION_1) {
