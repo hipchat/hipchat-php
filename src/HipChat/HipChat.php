@@ -171,7 +171,7 @@ class HipChat {
    */
    public function create_room($name, $owner_user_id = null, $privacy = null, $topic = null, $guest_access = null) {
      $args = array(
-       'name' => $name
+       'name' => utf8_encode($name)
      );
 
      if ($owner_user_id) {
