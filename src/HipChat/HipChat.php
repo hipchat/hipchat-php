@@ -50,6 +50,7 @@ class HipChat {
   private $api_target;
   private $auth_token;
   private $verify_ssl = true;
+  private $proxy;
 
   /**
    * Creates a new API interaction object.
@@ -260,6 +261,10 @@ class HipChat {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->verify_ssl);
+    if (isset($this->proxy)) {
+      curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
+      curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
+    }
     if (is_array($post_data)) {
       curl_setopt($ch, CURLOPT_POST, 1);
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
@@ -355,6 +360,16 @@ class HipChat {
   public function set_verify_ssl($bool = true) {
     $this->verify_ssl = (bool)$bool;
     return $this->verify_ssl;
+  }
+
+  /**
+   * Set an outbound proxy to use as a curl option
+   * To disable proxy usage, set $proxy to null
+   *
+   * @param string $proxy
+   */
+  public function set_proxy($proxy) {
+    $this->proxy = $proxy;
   }
 
 }
