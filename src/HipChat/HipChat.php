@@ -78,7 +78,7 @@ class HipChat {
    * @see http://api.hipchat.com/docs/api/method/rooms/show
    */
   public function get_room($room_id) {
-    $response = $this->make_request("rooms/show", array(
+    $response = $this->make_request('rooms/show', array(
       'room_id' => $room_id
     ));
     return $response->room;
@@ -124,12 +124,12 @@ class HipChat {
     $args = array(
       'room_id' => $room_id,
       'from' => $from,
-      'message' => utf8_encode($message),
+      'message' => $message,
       'notify' => (int)$notify,
       'color' => $color,
       'message_format' => $message_format
     );
-    $response = $this->make_request("rooms/message", $args, 'POST');
+    $response = $this->make_request('rooms/message', $args, 'POST');
     return ($response->status == 'sent');
   }
 
@@ -154,14 +154,14 @@ class HipChat {
    public function set_room_topic($room_id, $topic, $from = null) {
      $args = array(
        'room_id' => $room_id,
-       'topic' => utf8_encode($topic),
+       'topic' => $topic,
      );
 
      if ($from) {
-       $args['from'] = utf8_encode($from);
+       $args['from'] = $from;
      }
 
-     $response = $this->make_request("rooms/topic", $args, 'POST');
+     $response = $this->make_request('rooms/topic', $args, 'POST');
      return ($response->status == 'ok');
    }
 
@@ -184,15 +184,15 @@ class HipChat {
      }
 
      if ($topic) {
-       $args['topic'] = utf8_encode($topic);
+       $args['topic'] = $topic;
      }
 
      if ($guest_access) {
-       $args['guest_access'] = (int) $guest_access;
+       $args['guest_access'] = (int)$guest_access;
      }
 
      // Return the std object
-     return $this->make_request("rooms/create", $args, 'POST');
+     return $this->make_request('rooms/create', $args, 'POST');
     }
 
     /**
@@ -205,7 +205,7 @@ class HipChat {
        'room_id' => $room_id
      );
 
-     $response = $this->make_request("rooms/delete", $args, 'POST');
+     $response = $this->make_request('rooms/delete', $args, 'POST');
 
      return ($response->deleted == 'true');
    }
@@ -220,7 +220,7 @@ class HipChat {
    * @see http://api.hipchat.com/docs/api/method/users/show
    */
   public function get_user($user_id) {
-    $response = $this->make_request("users/show", array(
+    $response = $this->make_request('users/show', array(
       'user_id' => $user_id
     ));
     return $response->user;
@@ -253,7 +253,7 @@ class HipChat {
   public function curl_request($url, $post_data = null) {
 
     if (is_array($post_data)) {
-      $post_data = array_map(array($this, "sanitize_curl_parameter"), $post_data);
+      $post_data = array_map(array($this, 'sanitize_curl_parameter'), $post_data);
     }
 
     $ch = curl_init($url);
@@ -303,7 +303,7 @@ class HipChat {
    */
   private function sanitize_curl_parameter ($value) {
 
-    if ((strlen($value) > 0) && ($value[0] === "@")) {
+    if ((strlen($value) > 0) && ($value[0] === '@')) {
       return substr_replace($value, '&#64;', 0, 1);
     }
 
@@ -329,7 +329,7 @@ class HipChat {
 
     // add args to url for GET
     if ($http_method == 'GET') {
-      $url .= '?'.http_build_query($args);
+      $url .= '?' . http_build_query($args);
     } else {
       $post_data = $args;
     }
