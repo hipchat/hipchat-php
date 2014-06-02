@@ -93,7 +93,7 @@ class HipChat {
   public function room_exists($room_id) {
     try {
       $this->get_room($room_id);
-    } 
+    }
     catch (HipChat_Exception $e) {
       if ($e->code === self::STATUS_NOT_FOUND) {
         return false;
@@ -236,6 +236,111 @@ class HipChat {
     return $response->users;
   }
 
+  /**
+   * Create a new user in your group.
+   *
+   * @see http://api.hipchat.com/docs/api/method/users/create
+   */
+  public function create_user($email, $name, $mention_name = null,
+                              $title = null, $is_group_admin = 0,
+                              $password = null, $timezone = null) {
+    $args = array(
+      'email' => $email,
+      'name'  => $name,
+    );
+
+    if ($mention_name) {
+      $args['mention_name'] = $mention_name;
+    }
+
+    if ($title) {
+      $args['title'] = $title;
+    }
+
+    if ($is_group_admin) {
+      $args['is_group_admin'] = (int)$is_group_admin;
+    }
+
+    if ($password) {
+      $args['password'] = $password;
+    }
+
+    // @see http://api.hipchat.com/docs/api/timezones
+    if ($timezone) {
+      $args['timezone'] = $timezone;
+    }
+
+    // Return the std object
+    return $this->make_request('users/create', $args, 'POST');
+  }
+
+  /**
+   * Update a user.
+   *
+   * @see http://api.hipchat.com/docs/api/method/users/update
+   */
+  public function update_user($user_id, $email = null, $name = null,
+                              $mention_name = null, $title = null,
+                              $is_group_admin = 0, $password = null,
+                              $timezone = null) {
+    $args = array(
+      'user_id' => $user_id,
+    );
+
+    if ($email) {
+      $args['email'] = $email;
+    }
+
+    if ($name) {
+      $args['name'] = $name;
+    }
+
+    if ($mention_name) {
+      $args['mention_name'] = $mention_name;
+    }
+
+    if ($title) {
+      $args['title'] = $title;
+    }
+
+    if ($is_group_admin) {
+      $args['is_group_admin'] = (int)$is_group_admin;
+    }
+
+    if ($password) {
+      $args['password'] = $password;
+    }
+
+    // @see http://api.hipchat.com/docs/api/timezones
+    if ($timezone) {
+      $args['timezone'] = $timezone;
+    }
+
+    // Return the std object
+    return $this->make_request('users/update', $args, 'POST');
+  }
+
+  /**
+   * Delete a user.
+   *
+   * @see http://api.hipchat.com/docs/api/method/users/delete
+   */
+  public function delete_user($user_id) {
+    return $this->make_request('users/delete', array(
+      'user_id' => $user_id
+    ), 'POST');
+  }
+
+  /**
+   * Undelete a user. They will be sent an email requiring them to click a link to reactivate the account.
+   *
+   * @see http://api.hipchat.com/docs/api/method/users/undelete
+   */
+  public function undelete_user($user_id) {
+    return $this->make_request('users/undelete', array(
+      'user_id' => $user_id
+    ), 'POST');
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   // Helper functions
