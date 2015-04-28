@@ -51,6 +51,7 @@ class HipChat {
   private $auth_token;
   private $verify_ssl = true;
   private $proxy;
+  private $request_timeout = 15;
 
   /**
    * Creates a new API interaction object.
@@ -364,7 +365,7 @@ class HipChat {
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_TIMEOUT, $this->request_timeout);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->verify_ssl);
     if (isset($this->proxy)) {
       curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
@@ -477,6 +478,18 @@ class HipChat {
     $this->proxy = $proxy;
   }
 
+  /**
+   * Change CURL request timeout.
+   * You can change this value if you want to change request timeout toleration.
+   *
+   * @param int $timeout
+   *
+   * @return int
+   */
+  public function set_request_timeout($timeout = 15) {
+    $this->request_timeout = (int)$timeout;
+    return $this->request_timeout;
+  }
 }
 
 
